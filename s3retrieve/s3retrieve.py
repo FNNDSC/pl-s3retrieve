@@ -32,19 +32,25 @@ class S3RetrieveApp(ChrisApp):
     VERSION         = '0.1'
 
     def define_parameters(self):
-        self.add_parameter('--bucket', action='store', dest='dir', type=str, default='./',
+        self.add_parameter('--bucket', action='store', dest='bucket', type=str, default='./',
                            optional=False, help='name of the Amazon S3 bucket')
-        self.add_parameter('--s3path', action='store', dest='dir', type=str,
+        self.add_parameter('--s3path', action='store', dest='s3path', type=str,
                            optional=False, help='retrieve directory/file path in s3')
 
     def run(self, options):
         s3client = boto3.client('s3')
-        # this doesn't consider truncated response!
-        # https://boto3.readthedocs.io/en/latest/reference/services/s3.html#S3.Client.list_objects
-        response = s3client.list_objects(Bucket=options.bucket, Prefix=options.s3path)
-        for key in response[Contents]:
-            s3client.download_file(options.bucket, key,
-                                   os.path.join(options.outputdir, options.s3path))
+        item = {'Key': ''}
+        while True:
+            response = s3client.list_objects(Bucket=options.bucket, MaxKeys=200,
+                                             Prefix=options.s3path, Marker=item['Key'])
+            #import pdb; pdb.set_trace()
+            for item in response['Contents']:
+                dirname = os.path.join(options.outputdir, os.path.dirname(item['Key']))
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                s3client.download_file(options.bucket, item['Key'],
+                                       os.path.join(options.outputdir, item['Key']))
+            if not response['IsTruncated']: break
 
 
 
