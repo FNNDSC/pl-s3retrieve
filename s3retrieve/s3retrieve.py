@@ -20,7 +20,7 @@ class S3RetrieveApp(ChrisApp):
     Retrieve a file/folder from Amazon S3 service.
     """
     AUTHORS         = 'FNNDSC (dev@babyMRI.org)'
-    SELFPATH        = os.path.dirname(__file__)
+    SELFPATH        = os.path.abspath(__file__)
     SELFEXEC        = os.path.basename(__file__)
     EXECSHELL       = 'python3'
     TITLE           = 'S3 Retrieve'
@@ -32,7 +32,7 @@ class S3RetrieveApp(ChrisApp):
     VERSION         = '0.1'
 
     def define_parameters(self):
-        self.add_parameter('--bucket', action='store', dest='bucket', type=str, default='./',
+        self.add_parameter('--bucket', action='store', dest='bucket', type=str,
                            optional=False, help='name of the Amazon S3 bucket')
         self.add_parameter('--s3path', action='store', dest='s3path', type=str,
                            optional=False, help='retrieve directory/file path in s3')
