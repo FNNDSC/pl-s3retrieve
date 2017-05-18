@@ -20,7 +20,7 @@ class S3RetrieveApp(ChrisApp):
     Retrieve a file/folder from Amazon S3 service.
     """
     AUTHORS         = 'FNNDSC (dev@babyMRI.org)'
-    SELFPATH        = os.path.abspath(__file__)
+    SELFPATH        = os.path.dirname(os.path.abspath(__file__))
     SELFEXEC        = os.path.basename(__file__)
     EXECSHELL       = 'python3'
     TITLE           = 'S3 Retrieve'
@@ -38,6 +38,9 @@ class S3RetrieveApp(ChrisApp):
                            optional=False, help='retrieve directory/file path in s3')
 
     def run(self, options):
+
+        #options.inputdir is not being used! Some input data file needs to be read!
+
         s3client = boto3.client('s3')
         item = {'Key': ''}
         while True:
