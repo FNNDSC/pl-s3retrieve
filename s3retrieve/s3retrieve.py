@@ -32,10 +32,10 @@ class S3RetrieveApp(ChrisApp):
     VERSION         = '0.1'
 
     def define_parameters(self):
-        self.add_parameter('--bucket', action='store', dest='bucket', type=str,
-                           optional=False, help='name of the Amazon S3 bucket')
-        self.add_parameter('--s3path', action='store', dest='s3path', type=str,
-                           optional=False, help='retrieve directory/file path in s3')
+        self.add_argument('--bucket', dest='bucket', type=str, optional=False,
+                          help='name of the Amazon S3 bucket')
+        self.add_argument('--s3path', dest='s3path', type=str, optional=False,
+                          help='retrieve directory/file path in s3')
 
     def run(self, options):
 

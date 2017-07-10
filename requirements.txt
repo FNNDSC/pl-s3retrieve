@@ -1,2 +1,2 @@
-chrisapp==0.3
+chrisapp==1.0.0
 boto3==1.4.4
