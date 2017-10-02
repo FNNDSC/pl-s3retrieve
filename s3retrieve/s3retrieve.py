@@ -13,6 +13,7 @@ import os
 # import the Chris app superclass
 from chrisapp.base import ChrisApp
 import boto3
+import json
 
 
 class S3RetrieveApp(ChrisApp):
@@ -34,19 +35,25 @@ class S3RetrieveApp(ChrisApp):
     def define_parameters(self):
         self.add_argument('--bucket', dest='bucket', type=str, optional=False,
                           help='name of the Amazon S3 bucket')
-        self.add_argument('--s3path', dest='s3path', type=str, optional=False,
+        self.add_argument('--s3path', dest='s3path', type=str, default='', optional=True,
                           help='retrieve directory/file path in s3')
 
     def run(self, options):
+        # get the path on Amazon S3
+        s3path = options.s3path
+        if not s3path: # path passed through CLI has priority over JSON file
+            s3_path_file = os.path.join(options.inputdir, 's3path.json')
+            if os.path.exists(s3_path_file):
+                with open(s3_path_file) as path_file:
+                    data = json.load(path_file)
+                s3path = data['s3path']
 
-        #options.inputdir is not being used! Some input data file needs to be read!
-
+        # download folder/file from Amazon S3
         s3client = boto3.client('s3')
         item = {'Key': ''}
         while True:
             response = s3client.list_objects(Bucket=options.bucket, MaxKeys=200,
-                                             Prefix=options.s3path, Marker=item['Key'])
-            #import pdb; pdb.set_trace()
+                                             Prefix=s3path, Marker=item['Key'])
             for item in response['Contents']:
                 dirname = os.path.join(options.outputdir, os.path.dirname(item['Key']))
                 if not os.path.exists(dirname):
