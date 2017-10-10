@@ -32,21 +32,29 @@ class S3RetrieveApp(ChrisApp):
     LICENSE         = 'Opensource (MIT)'
     VERSION         = '0.1'
 
+    # Fill out this with key-value output descriptive info (such as an output file path
+    # relative to the output dir) that you want to save to the output meta file when
+    # called with the --saveoutputmeta flag
+    OUTPUT_META_DICT = {}
+
     def define_parameters(self):
+        """
+        Define the CLI arguments accepted by this plugin app.
+        """
+
         self.add_argument('--bucket', dest='bucket', type=str, optional=False,
                           help='name of the Amazon S3 bucket')
         self.add_argument('--s3path', dest='s3path', type=str, default='', optional=True,
                           help='retrieve directory/file path in s3')
 
     def run(self, options):
-        # get the path on Amazon S3
+        """
+        Define the code to be run by this plugin app.
+        """
+        # get Amazon S3 path
         s3path = options.s3path
-        if not s3path: # path passed through CLI has priority over JSON file
-            s3_path_file = os.path.join(options.inputdir, 's3path.json')
-            if os.path.exists(s3_path_file):
-                with open(s3_path_file) as path_file:
-                    data = json.load(path_file)
-                s3path = data['s3path']
+        if not s3path: # path passed through CLI has priority over JSON meta file
+            s3path = self.load_output_meta()['s3path']
 
         # download folder/file from Amazon S3
         s3client = boto3.client('s3')
