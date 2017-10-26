@@ -13,7 +13,6 @@ import os
 # import the Chris app superclass
 from chrisapp.base import ChrisApp
 import boto3
-import json
 
 
 class S3RetrieveApp(ChrisApp):
@@ -46,18 +45,31 @@ class S3RetrieveApp(ChrisApp):
                           help='name of the Amazon S3 bucket')
         self.add_argument('--s3path', dest='s3path', type=str, default='', optional=True,
                           help='retrieve directory/file path in s3')
+        self.add_argument('--awskeyid', dest='awskeyid', type=str,
+                          optional=False, help='aws access key id')
+        self.add_argument('--awssecretkey', dest='awssecretkey',
+                          type=str, optional=False, help='aws secret access key')
 
     def run(self, options):
         """
         Define the code to be run by this plugin app.
         """
-        # get Amazon S3 path
+        # get Amazon S3 credentials
+        if options.awskeyid and options.awssecretkey:
+            s3client = boto3.client(
+                's3',
+                aws_access_key_id=options.awskeyid,
+                aws_secret_access_key=options.awssecretkey
+            )
+        else:
+            s3client = boto3.client('s3')
+
+        # get Amazon S3 path (s3 file storage key)
         s3path = options.s3path
         if not s3path: # path passed through CLI has priority over JSON meta file
             s3path = self.load_output_meta()['s3path']
 
         # download folder/file from Amazon S3
-        s3client = boto3.client('s3')
         item = {'Key': ''}
         while True:
             response = s3client.list_objects(Bucket=options.bucket, MaxKeys=200,

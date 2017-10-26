@@ -24,12 +24,10 @@ Assign an "input" directory to ``/incoming`` and an output directory to ``/outgo
 .. code-block:: bash
 
     docker run --rm                                                         \
-        -e AWS_ACCESS_KEY_ID=KEYID                                          \
-        -e AWS_SECRET_ACCESS_KEY=ACCESSKEY                                  \
         -v $(pwd)/out:/incoming                                             \
         -v $(pwd)/out2:/outgoing                                            \
         fnndsc/pl-s3retrieve                                                \
-        s3retrieve.py --bucket bch-fnndsc --s3path test /incoming /outgoing
+        s3retrieve.py --awskeyid KEYID --awssecretkey ACCESSKEY --bucket bch-fnndsc --s3path test /incoming /outgoing
 
 The above will retrieve a copy of each file/folder inside the test "folder" in Amazon S3
 storage into the local ``/outgoing`` directory. Some metadata files should have previously
