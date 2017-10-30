@@ -43,8 +43,8 @@ class S3RetrieveApp(ChrisApp):
 
         self.add_argument('--bucket', dest='bucket', type=str, optional=False,
                           help='name of the Amazon S3 bucket')
-        self.add_argument('--s3path', dest='s3path', type=str, default='', optional=True,
-                          help='retrieve directory/file path in s3')
+        self.add_argument('--prefix', dest='prefix', type=str, default='', optional=True,
+                          help='retrieve directory/file prefix path in s3')
         self.add_argument('--awskeyid', dest='awskeyid', type=str,
                           optional=False, help='aws access key id')
         self.add_argument('--awssecretkey', dest='awssecretkey',
@@ -65,15 +65,15 @@ class S3RetrieveApp(ChrisApp):
             s3client = boto3.client('s3')
 
         # get Amazon S3 path (s3 file storage key)
-        s3path = options.s3path
-        if not s3path: # path passed through CLI has priority over JSON meta file
-            s3path = self.load_output_meta()['s3path']
+        prefix = options.prefix
+        if not prefix: # path passed through CLI has priority over JSON meta file
+            prefix = self.load_output_meta()['prefix']
 
         # download folder/file from Amazon S3
         item = {'Key': ''}
         while True:
             response = s3client.list_objects(Bucket=options.bucket, MaxKeys=200,
-                                             Prefix=s3path, Marker=item['Key'])
+                                             Prefix=prefix, Marker=item['Key'])
             for item in response['Contents']:
                 dirname = os.path.join(options.outputdir, os.path.dirname(item['Key']))
                 if not os.path.exists(dirname):
