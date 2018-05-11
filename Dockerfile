@@ -11,4 +11,4 @@ WORKDIR $APPROOT
 
 RUN pip install -r requirements.txt
 
-CMD ["s3retrieve.py", "--json"]
+CMD ["s3retrieve.py", "--help"]
