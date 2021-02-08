@@ -1,2 +1,3 @@
-chrisapp
+chrisapp~=2.3.0
+nose~=1.3.7
 boto3==1.4.4
