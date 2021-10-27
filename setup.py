@@ -6,7 +6,7 @@ with open(path.join(path.dirname(path.abspath(__file__)), 'README.rst')) as f:
 
 setup(
     name             = 's3retrieve',
-    version          = '1.0.0',
+    version          = '1.0.1',
     description      = 'An app to retrieve data of interest from Amazon S3 service',
     long_description = readme,
     author           = 'FNNDSC',
